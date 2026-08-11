@@ -165,6 +165,20 @@ deleted.
    When added, the option to add brief descriptions for each event ticket appears, which can be used
    to inform attendees of any perks or amenities that may coincide with specific ticket purchases.
 
+Set up ticket combos
+~~~~~~~~~~~~~~~~~~~~
+
+Optionally, users can also combine the event registration ticket with separate products (.e.g, food,
+beverages) to create a combo.
+
+To do so, click the :icon:`oi-settings-adjust` :guilabel:`(additional options)` drop-down menu and
+select the :guilabel:`Additional Products` checkbox. Then, in the resulting :guilabel:`Additional
+Products` column, select the products to combine with the registration ticket.
+
+Attendees who register for the ticket :ref:`from the website <events/sell-tickets/website>` now see
+the additional products included with their ticket on the *Order summary* page before confirming
+their order.
+
 .. _events/event-communication:
 
 Communication tab
@@ -329,6 +343,8 @@ and display them on attendees' tickets.
 
 In the :guilabel:`Note` field, users can leave internal notes for other event employees, such as
 "to-do" lists, contact information, instructions, and so on.
+
+.. _events/publish:
 
 Publish events
 ==============
