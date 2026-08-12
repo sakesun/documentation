@@ -1,101 +1,171 @@
-============================================
-Shopify fulfillment, accounting, and returns
-============================================
+:orphan:
 
-The Shopify Connector synchronizes fulfillments and shipping information, creates invoices and
+.. _shopify-delivery-flow: https://youtu.be/PYTLui2GWjY?si=_u30sfcHXzQnBD7m
+
+======================================
+Shopify delivery and return management
+======================================
+
+The Shopify Connector synchronizes deliveries and shipping information, creates invoices and
 registers payments, and processes returns and refunds between Shopify and Odoo.
 
-.. _shopify/fulfillment:
+.. _shopify/fulfillment/delivery-modes:
 
-Fulfillment and shipping
-========================
+Select a delivery mode
+======================
 
-A shipping line is added to the order with the default product :guilabel:`Ecommerce-shipping`. The
-amount and the actual name of the delivery carrier selected by the customer (such as Sendcloud,
-Shiprocket, or FedEx) is added in the description of that line.
+The delivery mode is configured on the Shopify account form. Go to :menuselection:`Sales app -->
+Configuration --> Accounts` and either select an existing Shopify account form or click
+:guilabel:`New`. Using the :guilabel:`Delivery Handled On` drop-down menu, users can configure which
+platform handles the delivery: :ref:`Odoo <shopify/fulfillment/odoo-deliveries>` or :ref:`Shopify
+(E-commerce Platform) <shopify/fulfillment/shopify-deliveries>`.
 
-Fulfillment modes
------------------
+.. image:: fulfillment/delivery-handled-on-drop-down-menu.png
+   :alt: Example of the Delivery Handled On field on the Shopify account form.
 
-You can configure who handles the delivery: Odoo or Shopify.
+.. seealso::
+   `Tutorial: Shopify connector delivery flow for Odoo 19 | Odoo.sh <shopify-delivery-flow_>`_
+
+.. _shopify/fulfillment/odoo-deliveries:
 
 Deliveries handled in Odoo
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------
 
-When deliveries are handled in Odoo:
+Configuring deliveries to be handled in Odoo is useful when a company's warehouse team are
+transitioning or already operating within Odoo.
 
-- The delivery is created in the :guilabel:`Assigned` state in Odoo.
-- After the delivery order is validated in Odoo, a scheduled action running every 10 minutes pushes
-  the shipment to Shopify.
-- The order is marked as fulfilled on Shopify, along with the carrier and tracking number from Odoo.
-- Shopify notifies the customer after the fulfillment is created.
+When the Shopify account form is set to *Delivery Handled On: Odoo*, the Shopify connector
+automatically creates a warehouse delivery form during the order sync. To process a Shopify delivery
+in Odoo, go to :menuselection:`Sales app --> Configuration --> Accounts` and select the desired
+Shopify account form.
+
+Click the :icon:`fa-dollar` :guilabel:`Orders` smart button to see all the sales orders (SO) from
+the Shopify store. Select the desired :abbr:`SO (sales order)` and click the :icon:`fa-truck`
+:guilabel:`Delivery` smart button.
+
+The warehouse delivery form is created in the :guilabel:`Ready` state in Odoo. Click
+:guilabel:`Validate` to confirm the delivery. Once validated, a :guilabel:`Scheduled for
+Synchronization with E-commerce Platform` badge displays on the form. A scheduled action running
+every 10 minutes pushes the shipment to Shopify or click the :guilabel:`Update to E-commerce` to
+manually push the update.
+
+.. image:: fulfillment/warehouse-receipt-odoo.png
+   :alt: Example of a warehouse receipt when Odoo is configured to handle deliveries.
+
+The order is marked as *Fulfilled* on Shopify, along with the carrier and tracking number from Odoo.
+Shopify notifies the customer after the fulfillment is created.
 
 .. note::
-   If deliveries are handled in Odoo, returns initiated in Shopify do **not** sync automatically, and
-   must be handled manually in Odoo.
+   If deliveries are handled in Odoo, returns initiated in Shopify do **not** sync automatically,
+   and must be handled manually in Odoo.
+
+.. _shopify/fulfillment/shopify-deliveries:
 
 Deliveries handled in Shopify
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------
 
-When deliveries are handled in Shopify:
+Configuring deliveries to be handled in Shopify is useful when the orders are fulfilled entirely
+within Shopify or by a third-party logistic entity. When the Shopify account form is set to
+*Delivery Handled On: E-commerce Platform*, the Shopify connector automatically creates a warehouse
+delivery receipt for the associated :abbr:`SO (sales order)` for proper inventory synchronization.
 
-- The fulfillment is created in Shopify.
-- During synchronization, a default delivery is created along with the sales order for proper
-  inventory synchronization.
-- Fulfillment details (carrier, tracking number, and quantities) are pulled into Odoo when an actual
-  fulfillment is created on Shopify.
-- Corresponding pickings are created as a backorder of the default picking, to reduce inventory if
-  there is a difference between the actual fulfillment and the delivered quantity.
+.. image:: fulfillment/warehouse-receipt-shopify.png
+   :alt: Example of a warehouse receipt when Shopify is configured to handle deliveries.
+
+While the entire delivery process is done in Shopify, the delivery details (carrier, tracking
+number, and quantities) are pulled into Odoo when an actual delivery is created on Shopify.
+
+Corresponding warehouse delivery forms are created as a back order of the default picking, to reduce
+inventory if there is a difference between the actual :abbr:`SO (sales order)` request and the
+delivered quantity.
 
 .. note::
-   If a fulfillment exists in Shopify but is not created in Odoo for any reason (including a
+   If a delivery exists in Shopify but is not created in Odoo for any reason (including a
    discrepancy at the order or invoice level), an activity is scheduled for resolution.
 
-For deliveries handled in Shopify, split fulfillments are fully supported and synchronized correctly.
-Multiple fulfillments can be created for the same order, including:
+Split fulfillments are fully supported and synchronized correctly. Multiple fulfillments can be
+created for the same order, including:
 
 - Fulfillment from different locations.
 - Multiple fulfillments from the same location.
 - Different carriers for different shipments.
-- Partial quantity fulfillments across shipments.
+- Partial quantity fulfillment across shipments.
 
-All fulfillment details, including location, carrier, tracking numbers, and fulfilled quantities, are
-synced accurately into Odoo, with corresponding stock moves and delivery updates.
+All fulfillment details, including location, carrier, tracking numbers, and fulfilled quantities,
+are synced accurately into Odoo, with corresponding stock moves and delivery updates.
 
-Fulfillment location handling
------------------------------
+.. _shopify/fulfillment/shipping:
 
-- Fulfillment locations from Shopify are mapped to the corresponding Odoo warehouse locations.
-- During fulfillment synchronization, the delivery picking is automatically assigned to the mapped
-  Odoo location.
-- This ensures stock movements are recorded against the correct warehouse or location, and maintains
-  inventory accuracy across multiple fulfillment centers.
+Shipping synchronization
+========================
 
-Inventory synchronization
--------------------------
+When a Shopify order includes a shipping fee and carrier, Odoo adds the default product
+:guilabel:`E-commerce Shipping` to the invoice. The amount and the actual name of the delivery
+carrier selected by the customer (such as Sendcloud, Shiprocket, or FedEx) is added in the
+description of that line.
 
-- Fulfillments received from Shopify are processed using a backorder-based approach.
-- Partial fulfillments automatically generate the required backorders in Odoo, ensuring that
-  fulfilled and remaining quantities are tracked correctly.
-- Inventory is synchronized immediately after order synchronization, to minimize stock discrepancies
-  between Shopify and Odoo.
-- Scheduled actions for order sync, inventory sync, and picking sync are optimized to ensure faster
-  synchronization of orders, fulfillments, and stock updates between Shopify and Odoo.
+.. image:: fulfillment/default-e-commerce-shipping.png
+   :alt: Example of the E-commerce Shipping product on an invoice in the Sales app.
+
+.. _shopify/fulfillment/delivery-location:
+
+Manage stock locations
+----------------------
+
+The Shopify connector allows syncing Shopify stock locations to Odoo stock locations, ensuring
+movements are recorded against the correct warehouse and inventory stays accurate across multiple
+fulfillment centers. Once mapped, delivery pickings are automatically assigned to the corresponding
+Odoo location during fulfillment synchronization.
+
+To map a Shopify store's stock location to a Odoo stock location, refer to the
+:ref:`shopify/manage/configure-multi-location` section of the *Shopify order management* page.
+
+To view or edit mapped Shopify to Odoo stock locations, navigate to :menuselection:`Sales app -->
+Configurations --> Locations` or click the :icon:`fa-cubes` :guilabel:`Locations` smart button on
+the Shopify account form. The :guilabel:`Locations` page displays the following:
+
+- :guilabel:`Name`: Shopify stock location.
+- :guilabel:`Stock Location`: Odoo stock location.
+- :guilabel:`Stock Synchronization`: When enabled it syncs exactly which inventory is synced back to
+  Shopify or pulled from Shopify.
+
+To edit the stock location mapping, click in either the :guilabel:`Name` or :guilabel:`Stock
+location` fields and select an option in the drop-down menu.
+
+.. image:: fulfillment/shopify-locations-page.png
+   :alt: Example of the Locations page for the Shopify Connector in Sales app.
+
+.. _shopify/fulfillment/inventory-sync:
+
+Syncing inventory with deliveries
+---------------------------------
+
+Shopify connector uses scheduled actions to sync orders, deliveries, and stock between Shopify and
+Odoo. Deliveries received from Shopify are processed using a backorder-based approach: partial
+fulfillments automatically generate the required backorders in Odoo, so fulfilled and remaining
+quantities are tracked correctly. Inventory syncs immediately after order syncing to minimize stock
+discrepancies between the two platforms.
+
+Refer to the :doc:`fulfillment` page for more information on order syncing. For information on
+inventory syncing with returns refer to :ref:`shopify/fulfillment/returns` section.
+
+.. _shopify/fulfillment/carrier-tracking-management:
 
 Carrier and tracking management
 -------------------------------
 
-- Carriers are mapped automatically.
-- If a carrier does not exist in Odoo, it is created automatically.
-- Tracking numbers are synchronized both ways.
+Carriers are mapped automatically during order synchronization. If a :ref:`carrier does not exist in
+Odoo <inventory/shipping/third_party>`, it is created automatically. Tracking numbers are
+synchronized both ways between Shopify and Odoo.
 
-.. _shopify/accounting:
+.. _shopify/fulfillment/accounting:
 
 Accounting and payments
 =======================
 
-A configuration option, :guilabel:`Create Invoice`, is available on the Shopify account. This option
-controls whether invoices are automatically created when importing orders from Shopify.
+The Shopify connector offers a :guilabel:`Create Invoice` option is available on the
+:ref:`Configuration tab <shopify/setup/administrative-settings>` of the Shopify account form. This
+option controls whether invoices are automatically created when importing orders from Shopify.
 
 When enabled:
 
@@ -109,98 +179,206 @@ When disabled, the invoice must be created manually from the sales order.
 .. note::
    This feature applies only to orders marked as fully paid in Shopify.
 
-.. image:: fulfillment/shopify-auto-invoice.png
+.. image:: fulfillment/auto-invoice.png
    :alt: An invoice automatically created and paid for a Shopify order in Odoo.
 
-.. _shopify/returns:
+Also in the *Configuration* tab is the *Journals* section which allows configuration of accounting
+journals for payments and sales. Refer to :ref:`shopify/setup/administrative-settings` for more
+details.
 
-Returns
-=======
+.. _shopify/fulfillment/create-returns-refunds:
 
-Initiating a return in Shopify
-------------------------------
-
-- **Initiation**: on a Shopify order, click :guilabel:`Return`, and select the quantity of products
-  to return for a single or multiple fulfillments.
-- **Completion**: the return is initially :guilabel:`In Progress`, and is not synced to Odoo in this
-  state. The return must be closed first.
-- **Closing**: close the return to make it eligible for synchronization.
-
-.. note::
-   Shopify allows creating one return for multiple fulfillments. Odoo splits the return into multiple
-   deliveries or fulfillments accordingly.
+Creating returns and refunds
+============================
 
 .. important::
-   When a return is initiated from Shopify, it is always created in Odoo when fulfilled by the
-   ecommerce account, and the associated product stock is reduced. If :guilabel:`Restocked` is not
-   selected during return creation in Shopify, stock is not reduced on Shopify, but it is reduced in
-   Odoo. Therefore, always select :guilabel:`Restocked` when creating a return, to maintain stock
-   consistency.
+   If :ref:`deliveries are handled in Odoo <shopify/fulfillment/odoo-deliveries>`, returns initiated
+   in Shopify do **not** sync automatically, and must be :doc:`done manually
+   <../products_prices/returns>` in Odoo.
+
+:ref:`Returns <shopify/fulfillment/returns>` and :ref:`refunds <shopify/fulfillment/refunds>` start
+in the Shopify platform. When an order is pulled from Shopify using the scheduled action or *Fetch
+Orders*, the return and refund are created in Odoo along with the associated delivery record (if
+applicable). This sync is ongoing: if a return and refund is created on Shopify after the order has
+already been fetched, it is still synced when the order is fetched again.
+
+During the sync, Odoo first checks whether a return and refund already exists on the :abbr:`SO
+(sales order)` using the unique refund identifier provided by Shopify. Only returns and refunds that
+do not yet exist in Odoo are synced.
+
+.. _shopify/fulfillment/returns:
+
+Creating a return
+-----------------
+
+Go to the desired Shopify order and click :guilabel:`Return`. On the *Return and exchange* page,
+enter the quantity of products to return for a single or multiple deliveries.
+
+.. image:: fulfillment/select-quantity-to-return.png
+   :alt: Example of the Return and Exchange page in Shopify.
+
+In the *Return shipping options* section, click :guilabel:`Add files` to upload a return label.
+Enter a tracking number in the :guilabel:`Tracking number` field and select a carrier option in the
+:guilabel:`Shipping carrier` drop-down menu. Click :guilabel:`Create return` to open a return.
+
+.. image:: fulfillment/return-shipping-options.png
+   :alt: Example of the Shipping options section on the Return form in Shopify.
+
+The return is initially set as *Return in progress*, and is not synced to Odoo in this state. The
+return must be closed first to make it eligible for synchronization. Click :guilabel:`Process and
+refund` to continue the process.
+
+On the *Process return* page, verify the return item information and select :guilabel:`Restock at`
+option. Then click :guilabel:`Process and refund` again to confirm and close the return in Shopify.
+
+.. image:: fulfillment/return-restock-at-option.png
+   :alt: Example of the Restock at option on the Return form in Shopify.
+
+.. note::
+   To keep stock consistent between the two platforms, always select :guilabel:`Restock at` when
+   creating a return. If the option is not selected, Shopify's stock is not reduced, but Odoo's
+   stock still is.
+
+   Shopify allows creating one return for multiple fulfillments. Odoo splits the return into
+   multiple deliveries or fulfillments accordingly.
 
 Syncing and processing a return in Odoo
----------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When an order is pulled from Shopify, the return is created in Odoo along with its associated delivery
-record. Returns are synced only for orders fulfilled by ecommerce. Return syncing is not a one-time
-process: if a return is created on Shopify after the order has already been fetched, it is still
-synced when the order is fetched again.
+.. important::
+   Returns with a :guilabel:`Canceled` status on Shopify are not synced. However, if a return was
+   already synced before being canceled on Shopify, an activity is scheduled on the return,
+   prompting the user to manually cancel it and adjust stock accordingly.
 
-The process for handling returns in Odoo is as follows:
+In the Odoo, go to :menuselection:`Sales app --> Configuration --> Accounts` and select the desired
+Shopify account. Click :icon:`fa-refresh` :guilabel:`Fetch Orders` to manually pull data from
+Shopify. Click :guilabel:`Orders` and select the desired :abbr:`SO (sales order)`.
 
-- **Check for duplicates**: during the sync, Odoo first checks whether the return already exists using
-  the unique refund identifier provided by Shopify. Only non-existent returns are synced.
-- **Handling cancelled returns**: returns with a :guilabel:`Cancelled` status from Shopify are not
-  synced. However, if a return has already been synced and is later cancelled on Shopify, an activity
-  is scheduled on the return, prompting the user to manually cancel the return and adjust the stock
-  accordingly.
-- **Return creation**: a return is created in Odoo for the associated picking of the order. This
-  includes the proper return lines, product, and quantity for each return line.
-- **Traceability**: a unique return identifier from Shopify is added to the Odoo return record for
-  proper traceability. This identifier is visible in the return record form view.
-- **Draft state**: the return is always created in the :guilabel:`Draft` state, to allow the user to
-  review it before validation. The return date of the Shopify return is set as the
-  :guilabel:`Scheduled Date` during return creation.
-- **Splitting returns**: when Shopify creates a single return for multiple fulfillments, Odoo splits
-  the return into separate return records, and associates each record with the corresponding
-  fulfillment.
+A return is created as a warehouse receipt form on the associated :abbr:`SO (sales order)`. Click
+the :icon:`fa-truck` :guilabel:`Delivery` smart button, to view the *Transfer* page that lists all
+the stock movements for the :abbr:`SO (sales order)`. Click on the warehouse receipt entry, it has
+`Return of WH/OUT/reference number` in the :guilabel:`Source Document` column.
 
-.. _shopify/refunds:
+.. image:: fulfillment/return-transfers-page.png
+   :alt: Example of the Transfers page for a Shopify SO in the Sales app.
 
-Refunds
-=======
+The warehouse receipt is always created in the :guilabel:`Ready` state, so the user can review it
+before validation. On the form, the return date from Shopify is set as the :guilabel:`Scheduled
+Date` and a the :guilabel:`E-commerce Return Identifier` field displays the unique refund identifier
+number Shopify added for traceability and avoid duplication during synchronization. The warehouse
+receipt form lists the return products and its quantities on their own order lines. Click
+:guilabel:`Validate` when the return product is received. The status on the warehouse receipt form
+changes to :guilabel:`Done`.
 
-Shopify supports creating refunds for orders either with returned products, or as manual refunds on
-the whole order. Refunds can be created partially or fully, depending on the products and quantities
-selected.
+.. note::
+   If Shopify creates a single return for multiple fulfillments, Odoo splits it into separate return
+   records, one per fulfillment.
 
-When an order is pulled from Shopify, refund information is fetched along with the order data. Refund
-syncing is not a one-time process: if a refund is created on Shopify after the order has already been
-fetched, it is still synced when the order is fetched again.
+.. image:: fulfillment/refund-warehouse-receipt.png
+   :alt: Example of the warehouse receipt for a Shopify return in the Sales app.
 
-The process for handling refunds in Odoo is as follows:
+Processing the refund for the return
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- **Check for duplicates**: Odoo first checks whether the refund already exists using the unique
-  Shopify refund identifier. Only refunds that do not already exist in Odoo are processed.
-- **Invoice validation**: refunds are created only when the associated order has exactly one invoice,
-  and that invoice is in the :guilabel:`Posted` state. If these conditions are not met, the refund is
-  skipped, and an activity may be scheduled for user review.
-- **Credit note creation**: for eligible refunds, Odoo creates a credit note linked to the original
-  invoice. The fiscal position from the original order is applied to both the invoice and the
-  generated credit note, to ensure consistent tax treatment.
-- **Refund date synchronization**: the refund date received from Shopify is applied as the credit note
-  date in Odoo.
-- **Traceability**: a unique refund identifier from Shopify is stored on the Odoo credit note for
-  proper traceability. This identifier is visible on the credit note record, and helps prevent
-  duplicate synchronization.
-- **Manual refund handling**: when Shopify creates a refund without associated return lines, Odoo
-  generates a credit note containing a single line using the configured :guilabel:`Refund Adjustment
-  Product`.
+Go back to the :abbr:`SO (sales order)` by clicking the SO number in the breadcrumbs. Click
+:icon:`fa-pencil-square-o` :guilabel:`Invoices` and the credit note line item is highlighted in blue
+and shows a negative amount in the :guilabel:`Total` column. Click the credit note to open the form.
 
-.. image:: fulfillment/shopify-credit-note.png
-   :alt: A credit note created in Odoo from a Shopify refund with its unique refund identifier.
+.. image:: fulfillment/refund-of-return-invoices-page.png
+   :alt: Example of the Invoices page for a Shopify return in the Sales app.
+
+The credit note is always created in the :guilabel:`Draft` state to allow for user review. On the
+create note form the :guilabel:`Invoice Date` and a the :guilabel:`E-commerce Return Identifier`
+field displays the unique refund identifier number Shopify added for traceability and prevent
+duplication during synchronization.
+
+.. image:: fulfillment/refund-of-return-credit-note.png
+   :alt: Example of a credit note draft for a Shopify return in the Sales app.
+
+Verify the products and quantities are correct and click :guilabel:`Confirm` to process the credit
+note. The status is updated to :guilabel:`Posted`, click :guilabel:`Pay` and in the *Pay* pop-up
+window click :guilabel:`Create Payment` to complete the refund. The credit note form displays a
+:guilabel:`Paid` banner.
+
+.. note::
+   When Shopify creates a refund without associated return lines, Odoo generates a credit note
+   containing a single line using the configured *Refund Adjustment Product* found in the Shopify
+   account form's *Default Products* tab as *E-commerce Refund Adjustment*.
+
+.. _shopify/fulfillment/refunds:
+
+Creating a refund
+-----------------
+
+The Shopify connector automatically syncs refund data for orders. It tracks refunds with returned
+products, or as manual refunds on the whole order. Refunds can be created partially or fully,
+depending on the products and quantities selected.
+
+Refunds are created only when the associated order has one invoice, and that invoice is in the
+*Posted* state. If these conditions are not met, the refund is skipped, and an activity may be
+scheduled for user review.
+
+To create a refund without a product return, go to the desired order in Shopify and click
+:guilabel:`Refund`. On the *Refund* page, verify the refund products and quantities, then click
+:guilabel:`Refund` to confirm and close the refund.
+
+.. image:: fulfillment/shopify-refund-page.png
+   :alt: Example of the Refund page in Shopify.
+
+Syncing and processing a refund in Odoo
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In the Odoo, go to :menuselection:`Sales app --> Configuration --> Accounts` and select the desired
+Shopify account. Click :icon:`fa-refresh` :guilabel:`Fetch Orders` to manually pull data from
+Shopify. Click :icon:`fa-dollar` :guilabel:`Orders` and select the desired :abbr:`SO (sales order)`.
+
+On the :abbr:`SO (sales order)` there is a :icon:`fa-truck` :guilabel:`Delivery` and
+:icon:`fa-pencil-square-o` :guilabel:`Invoices` smart button. The :doc:`fiscal position
+<../../../finance/accounting/taxes/fiscal_positions>` from the original order is applied to both the
+invoice and the generated credit note, to ensure consistent tax treatment.
+
+Click the :icon:`fa-pencil-square-o` :guilabel:`Invoices` smart button and the credit note line item
+is highlighted in blue and shows a negative amount in the :guilabel:`Total` column. Click the credit
+note to open the form.
+
+.. image:: fulfillment/refund-invoices-page.png
+   :alt: Example of the Invoices page for a Shopify SO in the Sales app.
+
+The credit note is always created in the :guilabel:`Draft` state to allow for user review. On the
+create note form the :guilabel:`Invoice Date` and a the :guilabel:`E-commerce Return Identifier`
+field displays the unique refund identifier number Shopify added for traceability and prevent
+duplication during synchronization.
+
+Verify the products and quantities are correct and click :guilabel:`Confirm` to process the credit
+note. The status is updated to :guilabel:`Posted`, click :guilabel:`Pay` and in the *Pay* pop-up
+window click :guilabel:`Create Payment` to complete the refund. The credit note form displays a
+:guilabel:`Paid` banner.
+
+.. note::
+   When Shopify creates a refund without associated return lines, Odoo generates a credit note
+   containing a single line using the configured *Refund Adjustment Product* found in the Shopify
+   account form's *Default Products* tab as *E-commerce Refund Adjustment*.
+
+.. image:: fulfillment/refund-credit-note-posted.png
+   :alt: Example of a processed credit note in the Sales app.
+
+Optional: Canceling a delivery associated to a refund
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When a customer requests a refund before the order is shipped for delivery, then the order sync
+still generates a invoice and a warehouse delivery form in Odoo. Users must manually cancel the
+delivery form when processing the refund.
+
+Go to :menuselection:`Sales app --> Configuration -- > Accounts` and select the desired Shopify
+account. Click the :icon:`fa-dollar` :guilabel:`Orders` smart button and select the desired
+:abbr:`SO (sales order)`. Click the :icon:`fa-truck` :guilabel:`Delivery` smart button and on the
+warehouse delivery form click :guilabel:`Cancel`.
+
+The warehouse delivery form's status changes to :guilabel:`Cancelled`. Since the products were never
+shipped to the customer, there is no need to do a manual stock adjustment.
 
 Refund amount reconciliation
-----------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Shopify and Odoo may calculate refund totals differently due to rounding, taxes, or other
 adjustments. To maintain accounting accuracy:
@@ -208,23 +386,23 @@ adjustments. To maintain accounting accuracy:
 - Odoo compares the refund total received from Shopify with the amount computed from the generated
   credit note.
 - If a difference is detected, an additional adjustment line is automatically added using the
-  configured :guilabel:`Adjustment Product`.
+  configured *Adjustment Product*.
 - This ensures that the final credit note total exactly matches the refund amount received from
   Shopify.
 
 Special cases
 -------------
 
-- **Insufficient refund data**: if a refund does not contain enough information to be processed
+- **Insufficient refund data**: If a refund does not contain enough information to be processed
   correctly, Odoo does not create the refund automatically. Instead, an activity is scheduled on the
   order to notify the user and allow manual review.
-- **Restocked items but missing returns**: if Shopify reports restocked items as part of a refund, but
-  no corresponding return exists in Odoo, Odoo schedules an activity on the order. This prompts the
-  user to manually verify and synchronize inventory movements, to maintain stock consistency.
-- **Refund deleted after synchronization**: if a refund that was previously fetched from Shopify is
-  later deleted in Shopify, subsequent refunds for the same order are not synchronized, to avoid data
-  inconsistency.
-- **Fulfillment scope**: refunds associated with unsupported fulfillment flows are not processed
+- **Restocked items but missing returns**: If Shopify reports restocked items as part of a refund,
+  but no corresponding return exists in Odoo, Odoo schedules an activity on the order. This prompts
+  the user to manually verify and synchronize inventory movements, to maintain stock consistency.
+- **Refund deleted after synchronization**: If a refund that was previously fetched from Shopify is
+  later deleted in Shopify, subsequent refunds for the same order are not synchronized, to avoid
+  data inconsistency.
+- **Fulfillment scope**: Refunds associated with unsupported fulfillment flows are not processed
   automatically.
 
 .. seealso::

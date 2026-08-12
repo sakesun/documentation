@@ -1,4 +1,5 @@
 :nosearch:
+:orphan:
 
 =================
 Shopify Connector
