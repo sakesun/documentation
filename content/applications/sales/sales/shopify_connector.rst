@@ -1,4 +1,4 @@
-:nosearch:
+q:nosearch:
 :orphan:
 
 =================
