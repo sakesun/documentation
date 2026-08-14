@@ -116,9 +116,24 @@ Next, configure information about the part in the remaining columns:
   be manually changed, if needed.
 - :guilabel:`Unit`: Select the |UoM| for the part.
 
+.. image:: repair_orders/repair-orders-parts-tab.png
+   :alt: Parts tab on the repair order form with the Quantity column visible.
+
 .. tip::
    To add additional columns to the line, click the :icon:`oi-settings-adjust` :guilabel:`(optional
    columns drop-down)` icon in the header row. Select the desired options to add to the line.
+
+Services tab
+~~~~~~~~~~~~
+
+The :guilabel:`Services` tab allows users to add service-type products, such as labor or
+diagnostics, to the |RO| for traceability and invoicing purposes. To add a service, click
+:guilabel:`Add a line`, then select a service product from the drop-down menu.
+
+.. image:: repair_orders/repair-orders-services-tab.png
+   :alt: Services tab on the repair order form with a service line added.
+
+Set the :guilabel:`Quantity` and :guilabel:`Unit` of the service, then click :guilabel:`Save`.
 
 Repair Notes tab
 ~~~~~~~~~~~~~~~~
@@ -135,20 +150,30 @@ for the repair. A :guilabel:`Component Status` also appears on the |RO| form, in
 repair order is *Available* or *Not Available* based on the availability of the parts.
 
 Once ready, click :guilabel:`Start Repair`. This moves the |RO| to the :guilabel:`Under Repair`
-stage. If the |RO| should be cancelled instead, click :guilabel:`Cancel Repair`.
+stage. If the |RO| should be canceled instead, click :guilabel:`Cancel Repair`.
 
 Once all products have been successfully repaired, the |RO| is completed. To register this in the
 database, click :guilabel:`End Repair`.
 
 .. note::
-   If all parts added to the |RO| were not used, clicking :guilabel:`End Repair` causes a
-   :guilabel:`Confirmation` pop-up window to appear. The pop-up window informs the user that there
-   is a difference between the initial demand and the actual quantity used for the repair order.
+   If the quantity consumed for a part or service differs from its initial demand, clicking
+   :guilabel:`End Repair` causes a :guilabel:`Consumption Warning` wizard to appear, listing the
+   expected (:guilabel:`To Consume`) and actual (:guilabel:`Consumed`) quantity for each affected
+   product.
 
-   To validate, click :guilabel:`Ok`. Otherwise, click :guilabel:`Cancel`.
+   .. image:: repair_orders/repair-orders-consumption-warning.png
+      :alt: Consumption Warning wizard comparing expected and consumed quantities.
 
-Ending the repair moves the |RO| to the :guilabel:`Repaired` stage. A :guilabel:`Product Moves`
-smart button also appears above the form.
+   Select one of three options to continue:
+
+   - :guilabel:`Confirm` to validate the |RO| with the quantities as they currently are.
+   - :guilabel:`Set Quantities & Validate` to update the demand of each line to match the quantity
+     consumed before validating.
+   - :guilabel:`Discard` to close the wizard without ending the repair.
+
+Ending the repair moves the |RO| to the :guilabel:`Repaired` stage. If the repair recorded any
+product moves, a :guilabel:`Product Moves` smart button also appears above the form. This smart
+button does not appear if the |RO| is canceled.
 
 Click the :guilabel:`Product Moves` smart button to view the product's moves history during and
 after the repair process.
@@ -176,6 +201,11 @@ customer for the repair.
 .. tip::
    If the customer should be charged for a repair service, a service type product can be created and
    added to the |SO| for a repaired product.
+
+.. note::
+   Once an invoice linked to a |RO| is posted, it can no longer be canceled from the |RO|. A new
+   invoice can only be created for the same |RO| once all of its existing invoices are posted, and
+   only if the |RO| has new parts or services that have not yet been invoiced.
 
 To return the product to the customer, navigate to the :menuselection:`Sales app`, and select the
 original |SO| from which the initial return was processed. Then, click the :guilabel:`Delivery`
