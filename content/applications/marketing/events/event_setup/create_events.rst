@@ -188,7 +188,7 @@ their order.
 Communication tab
 -----------------
 
-In the :guilabel:`Communication` tab of an event form, create various marketing communications that
+In the *Communication* tab of an event form, create various marketing communications that
 can be scheduled to be sent at specific intervals leading up to and following the event.
 
 .. image:: create_events/communication-tab.png
@@ -234,11 +234,19 @@ are different icons that appear, depending on the status of that particular comm
 status is represented by a :icon:`fa-check` :guilabel:`(checkmark)` icon. Finally, the *Scheduled*
 status is represented by an :icon:`fa-hourglass-half` :guilabel:`(hourglass)` icon.
 
-Any number of communications can be added in the :guilabel:`Communication` tab of an event form.
+are different icons that appear, depending on the status of that particular communication:
+
+-  :icon:`fa-cogs` :guilabel:`(Running)`: Indicates the communication is active and running.
+-  :icon:`fa-check` :guilabel:`(Sent)`: Indicates the communications were sent and is no longer active.
+- :icon:`fa-hourglass-half` :guilabel:`(Scheduled)`: Indicates the communication is scheduled but has not been deployed.
+
+Any number of communications can be added in the *Communication* tab of an event form.
 
 .. example::
    To send a confirmation email an hour after an attendee registers for an event, configure the
-   following communication:
+.. example::
+To send a confirmation email an hour after an attendee registers for an event, configure the
+ communication as follows:
 
    - :guilabel:`Interval`: `1`
    - :guilabel:`Unit`: :guilabel:`Hours`
@@ -259,7 +267,7 @@ Any number of communications can be added in the :guilabel:`Communication` tab o
 Questions tab
 -------------
 
-In the :guilabel:`Questions` tab of an event form, users can create questionnaires to gather
+In the *Questions* tab of an event form, users can create questionnaires to gather
 information from attendees when registering for the event.
 
 .. image:: create_events/questions-tab.png
@@ -268,7 +276,10 @@ information from attendees when registering for the event.
 .. note::
    By default, Odoo provides three questions in the :guilabel:`Questions` tab for every event form.
    The default questions require registrants to provide their :guilabel:`Name`, :guilabel:`Email`,
-   and an optional :guilabel:`Phone` number.
+.. note::
+By default, Odoo provides three questions in the *Questions* tab for every event form.
+The default questions require registrants to provide their :guilabel:`Name`, :guilabel:`Email`,
+and an optional :guilabel:`Phone` number.
 
    The information gathered from the :guilabel:`Questions` tab can be found on the
    :guilabel:`Attendees` dashboard, accessible via the :icon:`fa-users` :guilabel:`Attendees` smart
@@ -276,8 +287,9 @@ information from attendees when registering for the event.
    as well as their preferences.
 
 To add a question in the :guilabel:`Questions` tab, click :guilabel:`Add a line`. Doing so reveals
+To add a question in the *Questions* tab, click :guilabel:`Add a line`. Doing so reveals
 an *Add: Question* pop-up window. From here, users can select previously configured questions or
-click :guilabel:`New` to create a new one. Doing so opens a new *Create Question* pop-up window.
+click :guilabel:`Create New` to create a new one. Doing so opens a new *Create Question* pop-up window.
 
 .. image:: create_events/create-question-popup.png
    :alt: The Create Question pop-up window that appears in the Odoo Events application.
@@ -310,10 +322,10 @@ If :guilabel:`Selection` was chosen as the :guilabel:`Question Type`, an *Answer
 any answers to the question under this tab by clicking :guilabel:`Add a line`.
 
 Once all the desired configurations have been entered, click :guilabel:`Save & Close` to save the
-question and return to the :guilabel:`Questions` tab on the event form. Or, click :guilabel:`Save &
+question and return to the *Questions* tab on the event form. Or, click :guilabel:`Save &
 New` to save the question and configure another. To cancel, click :guilabel:`Discard`.
 
-Users can add as many questions in the :guilabel:`Questions` tab as needed.
+Users can add as many questions in the *Questions* tab as needed.
 
 .. tip::
    For :guilabel:`Selection` and :guilabel:`Text Input` types, a :icon:`fa-bar-chart`
@@ -325,7 +337,7 @@ Users can add as many questions in the :guilabel:`Questions` tab as needed.
 Notes & Documents tab
 ---------------------
 
-In the :guilabel:`Notes & Documents` tab of an event form, users can leave detailed internal notes
+In the *Notes & Documents* tab of an event form, users can leave detailed internal notes
 and event-related instructions or information for attendees.
 
 .. image:: create_events/notes-tab.png
