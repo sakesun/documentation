@@ -34,7 +34,7 @@ the pipeline.
 .. image:: create_events/kanban-dashboard.png
    :alt: Overview of Events dashboard with the Kanban view in Odoo Events.
 
-To add a new stage, click the :icon:`fa-plus` :guilabel:`Add Stage` button on the right, enter a
+To add a new stage, click the :icon:`fa-angle-double-right` :guilabel:`Add Stage` button on the right, enter a
 name for the stage, then click :icon:`fa-check` :guilabel:`(Add)` to add the stage or
 :icon:`fa-times` :guilabel:`(Remove)` to cancel.
 
@@ -46,7 +46,7 @@ Add a new event
 Events can be created by going to the :menuselection:`Events` app, on the :icon:`oi-view-kanban`
 :guilabel:`(Kanban)`, :icon:`oi-view-list` :guilabel:`(List)`, or :icon:`fa-tasks`
 :guilabel:`(Gantt)` views. Then, click the :guilabel:`New` button in the upper-left corner of the
-dashboard to open up a new event form.
+Events can be created by going to the :menuselection:`Events` app and clicking the :guilabel:`New` button in the upper-left corner. This opens a new *Events* form.
 
 .. image:: create_events/event-form.png
    :alt: Typical event template in the Odoo Events application.
@@ -72,10 +72,14 @@ To start, enter some basic information about the event in the following fields:
    To the right of the entered :guilabel:`Event Name`, there is a language tooltip, represented by
    an abbreviated language indicator (e.g., `EN`). When clicked, a :guilabel:`Translate name`
    pop-up window appears, displaying various preconfigured language translation options available in
-   the database.
+  .. note::
+  To the right of the entered :guilabel:`Event Name`, there is a language tooltip, represented by
+  an abbreviated language indicator (e.g., `EN`). When clicked, a *Translate: name*
+  pop-up window appears, displaying various preconfigured language translation options   available in
+the database.
 
 Alternatively, to populate the event form from an event template, select an option in the
-:guilabel:`Template` drop-down menu. To learn more, see the :doc:`event_templates` documentation.
+:doc:`Template <event_templates>` drop-down menu.
 
 Additionally, add any corresponding tags (e.g., `Online`, `Conference`) for the event in the
 :guilabel:`Tags` field. Multiple tags can be added per event.
@@ -114,6 +118,7 @@ Tickets tab
 -----------
 
 In the :guilabel:`Tickets` tab of the event form, create custom registration tickets and ticket
+In the *Tickets* tab of the event form, create custom registration tickets and ticket
 tiers for events.
 
 .. image:: create_events/tickets-tab.png
@@ -168,14 +173,13 @@ deleted.
 Set up ticket combos
 ~~~~~~~~~~~~~~~~~~~~
 
-Optionally, users can also combine the event registration ticket with separate products (.e.g, food,
-beverages) to create a combo.
+Optionally, users can combine the event registration ticket with separate products, such as food, beverages, or merchandise, to create a combo.
 
 To do so, click the :icon:`oi-settings-adjust` :guilabel:`(additional options)` drop-down menu and
 select the :guilabel:`Additional Products` checkbox. Then, in the resulting :guilabel:`Additional
 Products` column, select the products to combine with the registration ticket.
 
-Attendees who register for the ticket :ref:`from the website <events/sell-tickets/website>` now see
+Attendees who register for the specific ticket :ref:`from the website <events/sell-tickets/website>`  see
 the additional products included with their ticket on the *Order summary* page before confirming
 their order.
 
